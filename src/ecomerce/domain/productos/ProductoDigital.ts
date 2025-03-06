@@ -219,19 +219,14 @@ export class ProductoDigital extends AbstractProducto {
    * Los productos digitales siempre están disponibles si tienen stock > 0 o stock ilimitado.
    * @returns true si el producto está disponible.
    */
-  public estaDisponible(): boolean {
+  public override estaDisponible(): boolean {
     // Para productos digitales, consideramos que están disponibles si:
     // 1. Tienen stock > 0, o
     // 2. Tienen stock = -1 (ilimitado)
     return this.getStock() > 0 || this.getStock() === -1;
   }
 
-  /**
-   * Sobrescribe el método hook para validaciones adicionales antes de reducir stock.
-   * Para productos digitales con stock ilimitado (-1), no se reduce el stock.
-   * @param cantidad - La cantidad a reducir.
-   */
-  protected validarReduccionStock(cantidad: number): void {
+  protected override validarReduccionStock(cantidad: number): void {
     // Si el stock es ilimitado (-1), no hay necesidad de validar
     if (this.getStock() === -1) {
       return;
@@ -241,12 +236,7 @@ export class ProductoDigital extends AbstractProducto {
     super.validarReduccionStock(cantidad);
   }
 
-  /**
-   * Sobrescribe el método hook para acciones adicionales después de reducir stock.
-   * Para productos digitales con stock ilimitado (-1), no se reduce el stock.
-   * @param cantidad - La cantidad reducida.
-   */
-  protected despuesDeReducirStock(cantidad: number): void {
+  protected override despuesDeReducirStock(cantidad: number): void {
     // Si el stock es ilimitado (-1), no reducimos el stock
     if (this.getStock() === -1) {
       // Restaurar el stock a -1 (ya que el método base lo habría reducido)
@@ -311,7 +301,7 @@ export class ProductoDigital extends AbstractProducto {
    * Crea una representación en cadena del producto digital.
    * @returns Una cadena con la información básica del producto.
    */
-  public toString(): string {
+  public override toString(): string {
     return `ProductoDigital [id=${this.getId().getValue()}, nombre=${this.getNombre()}, formato=${this.formato}, tamaño=${this.tamanoMb}MB, precio=${this.getPrecio().toString()}, descuento=${this.descuento}%]`;
   }
 

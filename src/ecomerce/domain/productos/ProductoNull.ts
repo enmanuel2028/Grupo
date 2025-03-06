@@ -20,7 +20,7 @@ export class ProductoNull extends AbstractProducto {
    */
   private constructor() {
     super(
-      new ProductId('null-product'),
+      ProductId.create(),
       'Producto no disponible',
       'Este producto no existe o no está disponible',
       Money.zero(),
@@ -80,7 +80,7 @@ export class ProductoNull extends AbstractProducto {
    * Sobrescribe el método para verificar disponibilidad.
    * @returns Siempre false para un producto nulo.
    */
-  public estaDisponible(): boolean {
+  public override estaDisponible(): boolean {
     return false;
   }
 
@@ -89,7 +89,7 @@ export class ProductoNull extends AbstractProducto {
    * No hace nada en un producto nulo.
    * @throws Error siempre, ya que no se puede reducir stock de un producto nulo.
    */
-  public reducirStock(cantidad: number): void {
+  public override reducirStock(cantidad: number): void {
     throw new Error('No se puede reducir el stock de un producto nulo');
   }
 
@@ -98,7 +98,7 @@ export class ProductoNull extends AbstractProducto {
    * No hace nada en un producto nulo.
    * @throws Error siempre, ya que no se puede aumentar stock de un producto nulo.
    */
-  public aumentarStock(cantidad: number): void {
+  public override aumentarStock(cantidad: number): void {
     throw new Error('No se puede aumentar el stock de un producto nulo');
   }
 
@@ -106,23 +106,23 @@ export class ProductoNull extends AbstractProducto {
    * Sobrescribe todos los setters para que lancen error.
    * @throws Error siempre, ya que no se puede modificar un producto nulo.
    */
-  public setNombre(nombre: string): void {
+  public override setNombre(nombre: string): void {
     throw new Error('No se puede modificar un producto nulo');
   }
 
-  public setDescripcion(descripcion: string): void {
+  public override setDescripcion(descripcion: string): void {
     throw new Error('No se puede modificar un producto nulo');
   }
 
-  public setPrecio(precio: Money): void {
+  public override setPrecio(precio: Money): void {
     throw new Error('No se puede modificar un producto nulo');
   }
 
-  public setStock(stock: number): void {
+  public override setStock(stock: number): void {
     throw new Error('No se puede modificar un producto nulo');
   }
 
-  public setImagenUrl(imagenUrl: string): void {
+  public override setImagenUrl(imagenUrl: string): void {
     throw new Error('No se puede modificar un producto nulo');
   }
 
@@ -130,7 +130,7 @@ export class ProductoNull extends AbstractProducto {
    * Sobrescribe el método shouldEmitEvents para evitar la emisión de eventos.
    * @returns Siempre false para un producto nulo.
    */
-  protected shouldEmitEvents(): boolean {
+  protected override shouldEmitEvents(): boolean {
     return false;
   }
 
@@ -138,7 +138,7 @@ export class ProductoNull extends AbstractProducto {
    * Crea una representación en cadena del producto nulo.
    * @returns Una cadena que indica que es un producto nulo.
    */
-  public toString(): string {
+  public override toString(): string {
     return 'ProductoNull [Producto no disponible]';
   }
 }

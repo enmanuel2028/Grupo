@@ -2,6 +2,8 @@ import { AbstractProducto } from '../../domain/productos/AbstractProducto';
 import { Producto } from '../../domain/productos/Producto';
 import { ProductoNull } from '../../domain/productos/ProductoNull';
 import { ProductoRepository } from '../../domain/productos/DomainProductos';
+import { Money } from '../../domain/value-objects/Money';
+import { ProductId } from '../../domain/value-objects/ProductId';
 
 // Simulación de un modelo de MongoDB
 interface ProductoDocument {
@@ -79,24 +81,24 @@ export class MongoProductoRepository implements ProductoRepository {
     }
 
     // Verificar si el producto ya existe
-    const existingIndex = this.productos.findIndex(p => p._id === producto.getId());
+    const existingIndex = this.productos.findIndex(p => p._id === producto.getId().toString());
     if (existingIndex !== -1) {
       throw new Error(`El producto con ID ${producto.getId()} ya existe`);
     }
 
     // Crear documento para MongoDB
     const productoDoc: ProductoDocument = {
-      _id: producto.getId(),
+      _id: producto.getId().toString(),
       nombre: producto.getNombre(),
       descripcion: producto.getDescripcion(),
-      precio: producto.getPrecio(),
+      precio: producto.getPrecio().getAmount(),
       stock: producto.getStock(),
       categoriaId: producto.getCategoriaId(),
       imagenUrl: producto.getImagenUrl(),
       descuento: 0,
       destacado: false,
-      createdAt: producto.getCreatedAt(),
-      updatedAt: producto.getUpdatedAt()
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
 
     // Si es un Producto (no abstracto), obtener propiedades específicas
@@ -122,7 +124,7 @@ export class MongoProductoRepository implements ProductoRepository {
       throw new Error('No se puede actualizar un ProductoNull');
     }
 
-    const index = this.productos.findIndex(p => p._id === producto.getId());
+    const index = this.productos.findIndex(p => p._id === producto.getId().toString());
     
     if (index === -1) {
       throw new Error(`Producto con ID ${producto.getId()} no encontrado`);
@@ -130,17 +132,17 @@ export class MongoProductoRepository implements ProductoRepository {
 
     // Actualizar documento
     this.productos[index] = {
-      _id: producto.getId(),
+      _id: producto.getId().toString(),
       nombre: producto.getNombre(),
       descripcion: producto.getDescripcion(),
-      precio: producto.getPrecio(),
+      precio: producto.getPrecio().getAmount(),
       stock: producto.getStock(),
       categoriaId: producto.getCategoriaId(),
       imagenUrl: producto.getImagenUrl(),
       descuento: 0,
       destacado: false,
-      createdAt: producto.getCreatedAt(),
-      updatedAt: producto.getUpdatedAt()
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
 
     // Si es un Producto (no abstracto), actualizar propiedades específicas
@@ -171,15 +173,16 @@ export class MongoProductoRepository implements ProductoRepository {
    */
   private mapToDomain(doc: ProductoDocument): AbstractProducto {
     return new Producto(
-      doc._id,
+      ProductId.fromString(doc._id),
       doc.nombre,
       doc.descripcion,
-      doc.precio,
+      Money.of(doc.precio),
       doc.stock,
       doc.categoriaId,
       doc.imagenUrl,
       doc.descuento,
       doc.destacado,
+      [],
       doc.createdAt,
       doc.updatedAt
     );

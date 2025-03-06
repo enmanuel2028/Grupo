@@ -255,7 +255,7 @@ export class Producto extends AbstractProducto {
    * Crea una representación en cadena del producto.
    * @returns Una cadena con la información básica del producto.
    */
-  public toString(): string {
+  public override toString(): string {
     return `Producto [id=${this.getId().getValue()}, nombre=${this.getNombre()}, precio=${this.getPrecio().toString()}, descuento=${this.descuento}%, stock=${this.getStock()}]`;
   }
 
