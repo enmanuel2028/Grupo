@@ -6,8 +6,9 @@
 import { ProductoCreatedEvent } from './ProductoCreatedEvent';
 import { ProductoUpdatedEvent } from './ProductoUpdatedEvent';
 import { ProductoStockChangedEvent } from './ProductoStockChangedEvent';
+import { UserCreatedEvent } from './UserCreatedEvent';
 
-type ProductoEvent = ProductoCreatedEvent | ProductoUpdatedEvent | ProductoStockChangedEvent;
+type ProductoEvent = ProductoCreatedEvent | ProductoUpdatedEvent | ProductoStockChangedEvent | UserCreatedEvent;
 type EventHandler = (event: ProductoEvent) => void;
 
 export class ProductoEventEmitter {
