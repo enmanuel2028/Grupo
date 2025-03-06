@@ -2,139 +2,118 @@
 
 ## Estructura del Proyecto
 
-Este proyecto implementa un diseño dirigido por el dominio (DDD) para un sistema de comercio electrónico. Los componentes principales están organizados en la siguiente estructura:
+Este proyecto implementa un diseño dirigido por el dominio (DDD) y arquitectura hexagonal para un sistema de comercio electrónico. Los componentes principales están organizados en la siguiente estructura:
 
 ```
 src/
-└── ecomerce/
-    └── domain/
-        └── productos/
-            ├── AbstractProducto.ts       # Clase base abstracta de productos
-            ├── Producto.ts               # Implementación de producto estándar
-            ├── ProductoDigital.ts        # Implementación de producto digital
-            ├── ProductoNull.ts           # Implementación del patrón Objeto Nulo
-            ├── ProductoFactory.ts        # Implementación del patrón Fábrica
-            └── DomainProductos.ts        # Interfaces y DTOs del dominio
+├── ecomerce/
+│   ├── application/
+│   │   ├── service/      # Servicios de aplicación
+│   │   └── usercase/     # Casos de uso
+│   ├── domain/
+│   │   ├── carrito/      # Dominio del carrito de compras
+│   │   ├── events/       # Eventos del dominio
+│   │   ├── favoritos/    # Gestión de favoritos
+│   │   ├── productos/    # Dominio de productos
+│   │   ├── shared/       # Componentes compartidos
+│   │   ├── user/         # Dominio de usuarios
+│   │   └── value-objects/# Objetos de valor
+│   └── infrastucture/
+│       ├── controllers/  # Controladores
+│       ├── persistence/  # Persistencia de datos
+│       └── repositories/ # Implementación de repositorios
+└── express/
+    ├── domain/          # Dominio específico de Express
+    └── infrastucture/   # Configuración de Express
 ```
+
+## Capas de la Arquitectura
+
+### 1. Capa de Dominio (domain/)
+- **Productos**: Gestión de productos y catálogo
+- **Carrito**: Lógica del carrito de compras
+- **Favoritos**: Gestión de productos favoritos
+- **Usuarios**: Gestión de usuarios y autenticación
+- **Eventos**: Sistema de eventos del dominio
+- **Objetos de Valor**: Implementaciones inmutables
+
+### 2. Capa de Aplicación (application/)
+- **Servicios**: Implementación de la lógica de negocio
+- **Casos de Uso**: Orquestación de operaciones del dominio
+
+### 3. Capa de Infraestructura (infrastucture/)
+- **Controladores**: Manejo de peticiones HTTP
+- **Persistencia**: Implementación del almacenamiento
+- **Repositorios**: Implementación de interfaces del dominio
 
 ## Patrones de Diseño Utilizados
 
-1. **Patrón Método Plantilla** (AbstractProducto.ts)
-   - Define la estructura de las operaciones de productos
-   - Permite a las subclases sobrescribir pasos específicos
-   - Ejemplo: métodos `reducirStock()` y `aumentarStock()`
+1. **Arquitectura Hexagonal**
+   - Separación clara entre dominio y detalles técnicos
+   - Inversión de dependencias
+   - Puertos y adaptadores
 
-2. **Patrón Fábrica** (ProductoFactory.ts)
-   - Crea diferentes tipos de productos
-   - Encapsula la lógica de creación de productos
-   - Facilita la extensibilidad para nuevos tipos de productos
+2. **Patrón Repositorio**
+   - Abstracción del almacenamiento de datos
+   - Interfaces en el dominio
+   - Implementaciones en infraestructura
 
-3. **Patrón Constructor** (Producto.ts, ProductoDigital.ts)
-   - Proporciona una interfaz fluida para la creación de productos
-   - Separa la construcción de la representación
-   - Hace más legible la creación de objetos complejos
+3. **Patrón Servicio de Aplicación**
+   - Orquestación de operaciones del dominio
+   - Manejo de transacciones
+   - Coordinación entre diferentes agregados
 
-4. **Patrón Objeto Nulo** (ProductoNull.ts)
-   - Proporciona comportamiento seguro por defecto
-   - Elimina verificaciones de nulos
-   - Implementa el patrón Singleton para eficiencia
+4. **Eventos de Dominio**
+   - Comunicación entre agregados
+   - Desacoplamiento de componentes
+   - Consistencia eventual
 
-5. **Patrón Visitante** (Todas las clases de productos)
-   - Permite agregar operaciones sin modificar las clases
-   - Separa los algoritmos de la estructura del objeto
-   - Habilita el despacho doble
+## Componentes Principales
 
-## Comunicación entre Clases
+### Productos
+- Gestión del catálogo
+- Categorización
+- Precios y stock
+- Productos digitales y físicos
 
-### AbstractProducto
-- Clase base para todos los tipos de productos
-- Define atributos y comportamientos comunes
-- Se comunica con el sistema de eventos a través de ProductoEventEmitter
-- Implementa validaciones básicas y manejo de stock
+### Carrito de Compras
+- Agregar/remover productos
+- Cálculo de totales
+- Gestión de cantidades
 
-### Producto (Producto Estándar)
-- Hereda de AbstractProducto
-- Agrega funcionalidades para productos físicos
-- Se comunica con ProductoEventEmitter para eventos de dominio
-- Maneja descuentos y productos destacados
+### Usuarios
+- Registro y autenticación
+- Perfiles de usuario
+- Historial de compras
 
-### ProductoDigital
-- Hereda de AbstractProducto
-- Especializado en productos digitales
-- Maneja escenarios de stock ilimitado
-- Se comunica con el sistema de eventos para descargas
-
-### ProductoNull
-- Implementa comportamiento seguro por defecto
-- No se comunica con otros componentes
-- Retorna valores seguros y lanza errores apropiados
-
-### ProductoFactory
-- Crea instancias de productos
-- Se comunica con todas las clases de productos
-- Utiliza los constructores de cada tipo de producto
+### Favoritos
+- Guardar productos favoritos
+- Listas personalizadas
+- Notificaciones
 
 ## Eventos del Dominio
 
-- **ProductoCreatedEvent**: Cuando se crea un nuevo producto
-- **ProductoUpdatedEvent**: Cuando cambian los atributos
-- **ProductoStockChangedEvent**: Para modificaciones de stock
+- **ProductoCreatedEvent**: Creación de productos
+- **ProductoUpdatedEvent**: Actualización de productos
+- **UserCreatedEvent**: Registro de usuarios
+- **CarritoModifiedEvent**: Cambios en el carrito
 
 ## Ejemplos de Uso
 
-### Crear un Producto Estándar
+### Crear un Usuario
 ```typescript
-const producto = Producto.builder()
-  .withNombre("Laptop")
-  .withDescripcion("Laptop de alto rendimiento")
-  .withPrecio(Money.fromValue(999.99))
-  .withStock(10)
-  .withCategoria("electrónica")
-  .build();
+const usuario = new Usuario({
+  id: "user-123",
+  email: "usuario@ejemplo.com",
+  nombre: "Usuario Ejemplo"
+});
 ```
 
-### Crear un Producto Digital
+### Agregar Producto al Carrito
 ```typescript
-const productoDigital = ProductoDigital.builder()
-  .withNombre("E-book")
-  .withDescripcion("Libro digital")
-  .withPrecio(Money.fromValue(19.99))
-  .withStockIlimitado()
-  .withFormato(FormatoDigital.PDF)
-  .build();
+const carrito = new Carrito(userId);
+await carrito.agregarProducto({
+  productoId: "prod-123",
+  cantidad: 2
+});
 ```
-
-### Usar la Fábrica
-```typescript
-const producto = ProductoFactory.crearProducto(
-  TipoProducto.ESTANDAR,
-  {
-    nombre: "Laptop",
-    descripcion: "Laptop de alto rendimiento",
-    precio: 999.99,
-    stock: 10,
-    categoriaId: "electrónica"
-  }
-);
-```
-
-## Mejores Prácticas Implementadas
-
-1. **Inmutabilidad**
-   - Propiedades de solo lectura cuando es posible
-   - Copias defensivas de fechas y arrays
-
-2. **Validación**
-   - Validación de entrada en constructores:
-     - Nombre: No vacío y máximo 100 caracteres
-     - Descripción: No vacía
-     - Stock: No negativo
-     - Descuento: Entre 0 y 100
-     - Etiquetas: No vacías y normalizadas
-   - Validación de reglas de negocio en métodos
-   - Mensajes de error apropiados y descriptivos
-
-3. **Manejo de Eventos**
-   - Eventos de dominio para cambios de estado
-   - Emisión consistente de eventos
-   - Supresión de eventos cuando es necesario
