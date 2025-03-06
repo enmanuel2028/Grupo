@@ -3,26 +3,26 @@
  * Implementa el puerto UserRepository para pruebas y desarrollo.
  */
 
-import { User } from '../../domain/user/User';
-import { UserRepository } from '../../domain/user/UserRepository';
+import { Usuario } from '../../domain/user/Usuario';
+import { RepositorioUsuarios } from '../../domain/user/UserRepository';
 
 /**
  * Implementación en memoria del repositorio de usuarios.
  * Útil para pruebas y desarrollo.
  */
-export class InMemoryUserRepository implements UserRepository {
-  private users: Map<string, User>;
+export class InMemoryUserRepository implements RepositorioUsuarios {
+  private users: Map<string, Usuario>;
 
   constructor() {
-    this.users = new Map<string, User>();
+    this.users = new Map<string, Usuario>();
   }
 
   /**
    * Guarda un usuario en el repositorio.
-   * @param user - El usuario a guardar
+   * @param usuario - El usuario a guardar
    */
-  public async save(user: User): Promise<void> {
-    this.users.set(user.getId(), user);
+  public async guardar(usuario: Usuario): Promise<void> {
+    this.users.set(usuario.obtenerId(), usuario);
   }
 
   /**
@@ -30,19 +30,19 @@ export class InMemoryUserRepository implements UserRepository {
    * @param id - El identificador del usuario
    * @returns El usuario encontrado o null si no existe
    */
-  public async findById(id: string): Promise<User | null> {
+  public async buscarPorId(id: string): Promise<Usuario | null> {
     return this.users.get(id) || null;
   }
 
   /**
    * Busca un usuario por su correo electrónico.
-   * @param email - El correo electrónico del usuario
+   * @param correo - El correo electrónico del usuario
    * @returns El usuario encontrado o null si no existe
    */
-  public async findByEmail(email: string): Promise<User | null> {
-    for (const user of this.users.values()) {
-      if (user.getEmail() === email) {
-        return user;
+  public async buscarPorCorreo(correo: string): Promise<Usuario | null> {
+    for (const usuario of this.users.values()) {
+      if (usuario.obtenerCorreo() === correo) {
+        return usuario;
       }
     }
     return null;
@@ -50,20 +50,20 @@ export class InMemoryUserRepository implements UserRepository {
 
   /**
    * Actualiza un usuario existente.
-   * @param user - El usuario con los datos actualizados
+   * @param usuario - El usuario con los datos actualizados
    */
-  public async update(user: User): Promise<void> {
-    if (!this.users.has(user.getId())) {
+  public async actualizar(usuario: Usuario): Promise<void> {
+    if (!this.users.has(usuario.obtenerId())) {
       throw new Error('Usuario no encontrado');
     }
-    this.users.set(user.getId(), user);
+    this.users.set(usuario.obtenerId(), usuario);
   }
 
   /**
    * Elimina un usuario del repositorio.
    * @param id - El identificador del usuario a eliminar
    */
-  public async delete(id: string): Promise<void> {
+  public async eliminar(id: string): Promise<void> {
     if (!this.users.has(id)) {
       throw new Error('Usuario no encontrado');
     }
@@ -74,7 +74,7 @@ export class InMemoryUserRepository implements UserRepository {
    * Obtiene todos los usuarios del repositorio.
    * @returns Lista de usuarios
    */
-  public async findAll(): Promise<User[]> {
+  public async obtenerTodos(): Promise<Usuario[]> {
     return Array.from(this.users.values());
   }
 
