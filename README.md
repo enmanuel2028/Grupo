@@ -125,9 +125,14 @@ const producto = ProductoFactory.crearProducto(
    - Copias defensivas de fechas y arrays
 
 2. **Validación**
-   - Validación de entrada en constructores
+   - Validación de entrada en constructores:
+     - Nombre: No vacío y máximo 100 caracteres
+     - Descripción: No vacía
+     - Stock: No negativo
+     - Descuento: Entre 0 y 100
+     - Etiquetas: No vacías y normalizadas
    - Validación de reglas de negocio en métodos
-   - Mensajes de error apropiados
+   - Mensajes de error apropiados y descriptivos
 
 3. **Manejo de Eventos**
    - Eventos de dominio para cambios de estado
