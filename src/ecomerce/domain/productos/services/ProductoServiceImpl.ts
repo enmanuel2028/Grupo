@@ -1,6 +1,8 @@
 import { AbstractProducto } from '../AbstractProducto';
 import { Producto } from '../Producto';
 import { ProductoNull } from '../ProductoNull';
+import { ProductId } from '../../value-objects/ProductId';
+import { Money } from '../../value-objects/Money';
 import { 
   ProductoRepository, 
   ProductoService, 
@@ -71,13 +73,13 @@ export class ProductoServiceImpl implements ProductoService {
     } = productoData;
 
     // Generar un ID único (en una implementación real podría ser un UUID)
-    const id = Date.now().toString();
+    const id = ProductId.create();
     
     const nuevoProducto = new Producto(
       id,
       nombre,
       descripcion,
-      precio,
+      Money.of(precio),
       stock,
       categoriaId,
       imagenUrl,
@@ -96,7 +98,8 @@ export class ProductoServiceImpl implements ProductoService {
    * @throws Error si el producto no existe.
    */
   async updateProducto(id: string, productoData: UpdateProductoDTO): Promise<AbstractProducto> {
-    const producto = await this.productoRepository.findById(id);
+    const productId = ProductId.fromString(id);
+    const producto = await this.productoRepository.findById(productId.getValue());
     
     if (producto.getTipo() === 'NULL') {
       throw new Error(`Producto con ID ${id} no encontrado`);
@@ -112,7 +115,7 @@ export class ProductoServiceImpl implements ProductoService {
     }
     
     if (productoData.precio !== undefined) {
-      producto.setPrecio(productoData.precio);
+      producto.setPrecio(Money.of(productoData.precio));
     }
     
     if (productoData.stock !== undefined) {
@@ -143,7 +146,8 @@ export class ProductoServiceImpl implements ProductoService {
    * @returns Promesa que resuelve a un booleano indicando si se eliminó correctamente.
    */
   async deleteProducto(id: string): Promise<boolean> {
-    return this.productoRepository.delete(id);
+    const productId = ProductId.fromString(id);
+    return this.productoRepository.delete(productId.getValue());
   }
 
   /**
@@ -154,7 +158,8 @@ export class ProductoServiceImpl implements ProductoService {
    * @throws Error si el producto no existe o si no hay suficiente stock.
    */
   async updateStock(id: string, cantidad: number): Promise<AbstractProducto> {
-    const producto = await this.productoRepository.findById(id);
+    const productId = ProductId.fromString(id);
+    const producto = await this.productoRepository.findById(productId.getValue());
     
     if (producto.getTipo() === 'NULL') {
       throw new Error(`Producto con ID ${id} no encontrado`);

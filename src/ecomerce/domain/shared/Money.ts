@@ -1,67 +1,67 @@
 /**
- * Represents a monetary value with amount and currency.
- * Implements value object pattern for handling money in the domain.
+ * Representa un valor monetario con monto y moneda.
+ * Implementa el patrón de objeto de valor para manejar dinero en el dominio.
  */
 export class Money {
   private constructor(private readonly amount: number, private readonly currency: string = 'COP') {
     if (amount < 0) {
-      throw new Error('Amount cannot be negative');
+      throw new Error('El monto no puede ser negativo');
     }
   }
 
   /**
-   * Creates a new Money instance.
-   * @param amount - The monetary amount
-   * @param currency - The currency code (default: 'COP')
+   * Crea una nueva instancia de Money.
+   * @param amount - El monto monetario
+   * @param currency - El código de la moneda (por defecto: 'COP')
    */
   static of(amount: number, currency: string = 'COP'): Money {
     return new Money(amount, currency);
   }
 
   /**
-   * Gets the monetary amount.
+   * Obtiene el monto monetario.
    */
   getAmount(): number {
     return this.amount;
   }
 
   /**
-   * Gets the currency code.
+   * Obtiene el código de la moneda.
    */
   getCurrency(): string {
     return this.currency;
   }
 
   /**
-   * Adds another monetary value.
-   * @param other - The money to add
-   * @throws Error if currencies don't match
+   * Suma otro valor monetario.
+   * @param other - El dinero a sumar
+   * @throws Error si las monedas no coinciden
    */
   add(other: Money): Money {
     if (this.currency !== other.currency) {
-      throw new Error('Cannot add different currencies');
+      throw new Error('No se pueden sumar diferentes monedas');
     }
     return Money.of(this.amount + other.amount, this.currency);
   }
 
   /**
-   * Multiplies the monetary value by a factor.
-   * @param factor - The multiplication factor
+   * Multiplica el valor monetario por un factor.
+   * @param factor - El factor de multiplicación
    */
   multiply(factor: number): Money {
     return Money.of(this.amount * factor, this.currency);
   }
 
   /**
-   * Checks if two monetary values are equal.
-   * @param other - The money to compare with
+   * Verifica si dos valores monetarios son iguales.
+   * @param other - El dinero a comparar
    */
   equals(other: Money): boolean {
     return this.amount === other.amount && this.currency === other.currency;
   }
 
   /**
-   * Returns a string representation of the monetary value.
+   * Devuelve una representación en cadena del valor monetario.
    */
   toString(): string {
     return `${this.amount} ${this.currency}`;

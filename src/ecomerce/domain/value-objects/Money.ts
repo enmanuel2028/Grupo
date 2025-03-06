@@ -17,14 +17,14 @@ export class Money {
    * @param amount - The monetary amount
    * @param currency - The currency code (default: USD)
    */
-  public static fromValue(amount: number, currency: string = 'USD'): Money {
+  public static fromValue(amount: number, currency: string = 'COP'): Money {
     return new Money(amount, currency);
   }
 
   /**
    * Creates a Money instance representing zero amount.
    */
-  public static zero(currency: string = 'USD'): Money {
+  public static zero(currency: string = 'COP'): Money {
     return new Money(0, currency);
   }
 
