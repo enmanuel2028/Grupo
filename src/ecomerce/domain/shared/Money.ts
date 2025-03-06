@@ -3,7 +3,7 @@
  * Implements value object pattern for handling money in the domain.
  */
 export class Money {
-  private constructor(private readonly amount: number, private readonly currency: string = 'USD') {
+  private constructor(private readonly amount: number, private readonly currency: string = 'COP') {
     if (amount < 0) {
       throw new Error('Amount cannot be negative');
     }
@@ -12,9 +12,9 @@ export class Money {
   /**
    * Creates a new Money instance.
    * @param amount - The monetary amount
-   * @param currency - The currency code (default: 'USD')
+   * @param currency - The currency code (default: 'COP')
    */
-  static of(amount: number, currency: string = 'USD'): Money {
+  static of(amount: number, currency: string = 'COP'): Money {
     return new Money(amount, currency);
   }
 
