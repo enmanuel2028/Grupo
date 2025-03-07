@@ -3,17 +3,16 @@
  * Implementa el patrón Aggregate Root para la gestión de usuarios.
  */
 
+import { UserData } from './UserData';
+import { UserValidations } from './UserValidations';
+
 /**
  * Clase que representa un usuario en el sistema.
  * Actúa como Aggregate Root para la gestión de usuarios.
  */
 export class Usuario {
-  private readonly id: string;
-  private correo: string;
+  private readonly userData: UserData;
   private contrasena: string;
-  private nombre: string;
-  private readonly fechaCreacion: Date;
-  private fechaActualizacion: Date;
 
   /**
    * @param id - Identificador único del usuario
@@ -27,16 +26,12 @@ export class Usuario {
     contrasena: string,
     nombre: string
   ) {
-    this.validarCorreo(correo);
-    this.validarContrasena(contrasena);
-    this.validarNombre(nombre);
+    UserValidations.validarCorreo(correo);
+    UserValidations.validarContrasena(contrasena);
+    UserValidations.validarNombre(nombre);
 
-    this.id = id;
-    this.correo = correo;
+    this.userData = new UserData(id, correo, nombre);
     this.contrasena = contrasena;
-    this.nombre = nombre;
-    this.fechaCreacion = new Date();
-    this.fechaActualizacion = new Date();
   }
 
   /**
@@ -44,7 +39,7 @@ export class Usuario {
    * @returns El identificador único del usuario.
    */
   public obtenerId(): string {
-    return this.id;
+    return this.userData.obtenerId();
   }
 
   /**
@@ -52,7 +47,7 @@ export class Usuario {
    * @returns El correo electrónico.
    */
   public obtenerCorreo(): string {
-    return this.correo;
+    return this.userData.obtenerCorreo();
   }
 
   /**
@@ -60,9 +55,8 @@ export class Usuario {
    * @param correo - Nuevo correo electrónico.
    */
   public establecerCorreo(correo: string): void {
-    this.validarCorreo(correo);
-    this.correo = correo;
-    this.actualizarFechaModificacion();
+    UserValidations.validarCorreo(correo);
+    this.userData.establecerCorreo(correo);
   }
 
   /**
@@ -70,7 +64,7 @@ export class Usuario {
    * @returns El nombre completo del usuario.
    */
   public obtenerNombre(): string {
-    return this.nombre;
+    return this.userData.obtenerNombre();
   }
 
   /**
@@ -78,9 +72,8 @@ export class Usuario {
    * @param nombre - Nuevo nombre.
    */
   public establecerNombre(nombre: string): void {
-    this.validarNombre(nombre);
-    this.nombre = nombre;
-    this.actualizarFechaModificacion();
+    UserValidations.validarNombre(nombre);
+    this.userData.establecerNombre(nombre);
   }
 
   /**
@@ -98,9 +91,8 @@ export class Usuario {
    * @param contrasena - Nueva contraseña (debe estar hasheada).
    */
   public establecerContrasena(contrasena: string): void {
-    this.validarContrasena(contrasena);
+    UserValidations.validarContrasena(contrasena);
     this.contrasena = contrasena;
-    this.actualizarFechaModificacion();
   }
 
   /**
@@ -108,7 +100,7 @@ export class Usuario {
    * @returns La fecha de creación.
    */
   public obtenerFechaCreacion(): Date {
-    return new Date(this.fechaCreacion.getTime());
+    return this.userData.obtenerFechaCreacion();
   }
 
   /**
@@ -116,48 +108,7 @@ export class Usuario {
    * @returns La fecha de última modificación.
    */
   public obtenerFechaActualizacion(): Date {
-    return new Date(this.fechaActualizacion.getTime());
-  }
-
-  /**
-   * Valida el formato del correo electrónico.
-   * @param correo - Correo electrónico a validar.
-   * @throws Error si el correo electrónico no es válido.
-   */
-  private validarCorreo(correo: string): void {
-    const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!correo || !regexCorreo.test(correo)) {
-      throw new Error('El correo electrónico no es válido');
-    }
-  }
-
-  /**
-   * Valida la contraseña.
-   * @param contrasena - Contraseña a validar.
-   * @throws Error si la contraseña no cumple con los requisitos.
-   */
-  private validarContrasena(contrasena: string): void {
-    if (!contrasena || contrasena.length < 6) {
-      throw new Error('La contraseña debe tener al menos 6 caracteres');
-    }
-  }
-
-  /**
-   * Valida el nombre del usuario.
-   * @param nombre - Nombre a validar.
-   * @throws Error si el nombre no es válido.
-   */
-  private validarNombre(nombre: string): void {
-    if (!nombre || nombre.trim().length === 0) {
-      throw new Error('El nombre no puede estar vacío');
-    }
-  }
-
-  /**
-   * Actualiza la fecha de modificación al momento actual.
-   */
-  private actualizarFechaModificacion(): void {
-    this.fechaActualizacion = new Date();
+    return this.userData.obtenerFechaActualizacion();
   }
 
   /**
@@ -166,11 +117,7 @@ export class Usuario {
    */
   public aPrimitivos(): any {
     return {
-      id: this.id,
-      correo: this.correo,
-      nombre: this.nombre,
-      fechaCreacion: this.fechaCreacion,
-      fechaActualizacion: this.fechaActualizacion
+      ...this.userData.aPrimitivos()
     };
   }
 }
