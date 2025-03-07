@@ -6,6 +6,7 @@
 import { AbstractProducto } from './AbstractProducto';
 import { Producto } from './Producto';
 import { ProductoDigital, FormatoDigital } from './ProductoDigital';
+import { ProductoNatural, TipoProductoNatural } from './ProductoNatural';
 import { ProductId } from '../value-objects/ProductId';
 import { Money } from '../value-objects/Money';
 
@@ -14,7 +15,8 @@ import { Money } from '../value-objects/Money';
  */
 export enum TipoProducto {
   ESTANDAR = 'ESTANDAR',
-  DIGITAL = 'DIGITAL'
+  DIGITAL = 'DIGITAL',
+  NATURAL = 'NATURAL'
 }
 
 /**
@@ -44,6 +46,16 @@ export interface ProductoDigitalData extends ProductoEstandarData {
 }
 
 /**
+ * Interfaz para los datos necesarios para crear un producto natural.
+ */
+export interface ProductoNaturalData extends ProductoEstandarData {
+  tipoProducto: TipoProductoNatural;
+  ingredientes: string[];
+  beneficios: string[];
+  certificaciones?: string[];
+}
+
+/**
  * Factory para la creación de diferentes tipos de productos.
  * Implementa el patrón Factory Method.
  */
@@ -62,6 +74,9 @@ export class ProductoFactory {
       
       case TipoProducto.DIGITAL:
         return this.crearProductoDigital(data as ProductoDigitalData);
+      
+      case TipoProducto.NATURAL:
+        return this.crearProductoNatural(data as ProductoNaturalData);
       
       default:
         throw new Error(`Tipo de producto no soportado: ${tipo}`);
@@ -107,5 +122,31 @@ export class ProductoFactory {
       .withUrlDescarga(data.urlDescarga)
       .withDescuento(data.descuento || 0)
       .build();
+  }
+
+  /**
+   * Crea un nuevo producto natural.
+   * @param data - Los datos para la creación del producto natural.
+   * @returns El producto natural creado.
+   */
+  private static crearProductoNatural(data: ProductoNaturalData): ProductoNatural {
+    return new ProductoNatural(
+      data.id ? ProductId.fromString(data.id) : ProductId.create(),
+      data.nombre,
+      data.descripcion,
+      Money.fromValue(data.precio, data.moneda || 'USD'),
+      data.stock,
+      data.categoriaId,
+      data.imagenUrl || '',
+      data.tipoProducto,
+      data.ingredientes,
+      data.beneficios,
+      data.certificaciones || [],
+      data.descuento || 0,
+      data.destacado || false,
+      data.etiquetas || [],
+      new Date(),
+      new Date()
+    );
   }
 }

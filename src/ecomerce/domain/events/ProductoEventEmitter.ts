@@ -12,6 +12,13 @@ type ProductoEvent = ProductoCreatedEvent | ProductoUpdatedEvent | ProductoStock
 type EventHandler = (event: ProductoEvent) => void;
 
 export class ProductoEventEmitter {
+  /**
+   * Emits a product updated event.
+   * @param producto - The updated product
+   */
+  public emitProductoActualizado(producto: { id: string }, propertyName: string, oldValue: any, newValue: any): void {
+    this.emit(new ProductoUpdatedEvent(producto.id, propertyName, oldValue, newValue));
+  }
   private static instance: ProductoEventEmitter;
   private handlers: EventHandler[] = [];
 

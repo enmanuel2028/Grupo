@@ -468,4 +468,5 @@ export interface ProductoVisitor<T> {
   visitProductoDigital(producto: any): T;
   visitProductoPersonalizado(producto: any): T;
   visitProductoNull(producto: any): T;
+  visitProductoNatural(producto: any): T;
 }
