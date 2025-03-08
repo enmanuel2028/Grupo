@@ -1,8 +1,8 @@
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import bcrypt from 'bcryptjs';
 import pool from '../../config/database';
-import { User, UserRegister, UserUpdate, UserResponse } from '../../../domain/models/user.model';
-import { IUserRepository } from '../../../domain/repositories/user.repository';
+import { User, UserRegister, UserUpdate, UserResponse } from '../../../../Usuario/Dominio/Model/user.model';
+import { IUserRepository } from '../../../../Usuario/infrastucture/user.repository';
 
 export class MySQLUserRepository implements IUserRepository {
     async findById(id: number): Promise<UserResponse | null> {

@@ -1,4 +1,4 @@
-import { User, UserRegister, UserUpdate, UserResponse } from '../models/user.model';
+import { User, UserRegister, UserUpdate, UserResponse } from '../Dominio/Model/user.model';
 
 export interface IUserRepository {
     findById(id: number): Promise<UserResponse | null>;

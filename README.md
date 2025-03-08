@@ -27,6 +27,26 @@ src/
     └── infrastucture/   # Configuración de Express
 ```
 
+## Configuración de Express
+
+### Patrón Provider
+La implementación de Express utiliza el patrón Provider para gestionar la inyección de dependencias y la configuración de la aplicación:
+
+- **AppProvider**: Configuración principal de la aplicación Express
+- **DatabaseProvider**: Gestión de la conexión a MySQL
+- **RouterProvider**: Configuración de rutas y middleware
+- **ServicesProvider**: Registro de servicios de la aplicación
+
+### Gestión de Imágenes
+- Servicio de almacenamiento y recuperación de imágenes
+- Optimización y procesamiento de imágenes
+- Rutas específicas para la gestión de recursos multimedia
+
+### Base de Datos MySQL
+- Implementación de repositorios con MySQL
+- Esquemas y migraciones de la base de datos
+- Optimización de consultas y relaciones
+
 ## Capas de la Arquitectura
 
 ### 1. Capa de Dominio (domain/)
